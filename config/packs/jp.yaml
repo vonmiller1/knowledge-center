@@ -1,0 +1,13 @@
+# Japan retention and escalation pack (obviously synthetic policy numbers).
+market: JP
+action_sla_days: 3
+decision_review_days: 7
+retention_years: 10
+external_binding_markers:
+  - sign
+  - signed
+  - contract
+  - customer commitment
+  - vendor
+  - binding
+  - seal

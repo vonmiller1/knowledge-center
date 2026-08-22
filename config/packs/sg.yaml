@@ -1,0 +1,15 @@
+# Singapore retention and escalation pack (obviously synthetic policy numbers).
+# Loaded and validated by src/meeting_capture/domain/retention.py. An unknown field is refused
+# at load: a key the engine does not understand is a policy it is not applying.
+market: SG
+action_sla_days: 5
+decision_review_days: 10
+retention_years: 7
+external_binding_markers:
+  - sign
+  - signed
+  - contract
+  - customer commitment
+  - vendor
+  - binding
+  - guarantee
