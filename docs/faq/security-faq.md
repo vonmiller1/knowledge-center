@@ -70,8 +70,8 @@ has switched off is no guard.
 
 The real one is the Hrz7 review submission (`adapters/gcp/review_router.py`) over the shared
 `review-kit`, which is stdlib `urllib` with S2S headers wire-compatible with
-`hex-service-kit`'s server verifier. Its credentials are `HRZ7_S2S_TOKEN` and
-`HRZ7_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
+`hex-service-kit`'s server verifier. Its credentials are `HUMAN_REVIEW_S2S_TOKEN` and
+`HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
 `MEETCAP_S2S_TOKEN`. The managed router REFUSES when no console URL is configured rather than
 swallowing the escalation.
 
