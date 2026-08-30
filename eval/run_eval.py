@@ -31,12 +31,9 @@ from agent_eval_kit import EvalMetricResult, EvalReport, PromotionGateClient, ev
 from pii_kit import pack_leak
 
 from meeting_capture.config import Settings, build_container
-from meeting_capture.domain.capture_service import (
-    CaptureResult,
-    MeetingCaptureService,
-    load_default_packs,
-)
+from meeting_capture.domain.capture_service import CaptureResult, MeetingCaptureService
 from meeting_capture.domain.pii import PII_PATTERNS
+from meeting_capture.packs import load_default_packs
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DATASET = _REPO_ROOT / "eval" / "datasets" / "golden_meetings.jsonl"

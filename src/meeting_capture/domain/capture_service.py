@@ -19,7 +19,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import date
-from pathlib import Path
 
 from pii_kit import redact
 from speech_lexicon_kit import AudioRef, Transcript
@@ -39,20 +38,10 @@ from .meeting import Minutes, Register, RegisterEntry
 from .minutes import draft_minutes
 from .models import TriageResult
 from .pii import PII_PATTERNS
-from .retention import RetentionPack, load_packs
+from .retention import RetentionPack
 from .turns import assemble, redact_for_model, transcript_digest
 
-__all__ = ["CaptureResult", "MeetingCaptureService", "default_packs_dir", "load_default_packs"]
-
-
-def default_packs_dir() -> Path:
-    """The shipped retention-pack directory, resolved relative to the repository root."""
-    return Path(__file__).resolve().parents[3] / "config" / "packs"
-
-
-def load_default_packs() -> dict[str, RetentionPack]:
-    """Load the shipped per-market retention packs (used by the API, CLI, demo and eval)."""
-    return load_packs(default_packs_dir())
+__all__ = ["CaptureResult", "MeetingCaptureService"]
 
 
 #: One span per captured meeting. Structural attributes only: see

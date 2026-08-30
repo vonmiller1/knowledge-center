@@ -9,9 +9,10 @@ from datetime import date
 from hex_service_kit.logging import configure_logging
 
 from ..config import build_container
-from ..domain.capture_service import MeetingCaptureService, load_default_packs
+from ..domain.capture_service import MeetingCaptureService
 from ..domain.models import TriageInput
 from ..domain.triage_service import TriageService
+from ..packs import load_default_packs
 
 
 def main(argv: list[str] | None = None) -> int:

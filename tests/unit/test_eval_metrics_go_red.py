@@ -15,12 +15,9 @@ from datetime import date
 from agent_eval_kit import assert_can_go_red, assert_each_can_go_red
 
 from meeting_capture.config import build_container
-from meeting_capture.domain.capture_service import (
-    CaptureResult,
-    MeetingCaptureService,
-    load_default_packs,
-)
+from meeting_capture.domain.capture_service import CaptureResult, MeetingCaptureService
 from meeting_capture.domain.retention import RetentionPack
+from meeting_capture.packs import load_default_packs
 
 from tests.conftest import local_settings
 

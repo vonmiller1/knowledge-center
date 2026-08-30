@@ -55,16 +55,14 @@ from meeting_capture.domain import (
     kernel,
     models,
 )
-from meeting_capture.domain.capture_service import (
-    MeetingCaptureService,
-    load_default_packs,
-)
+from meeting_capture.domain.capture_service import MeetingCaptureService
 from meeting_capture.domain.pii import (
     JURISDICTIONS,
 )
 from meeting_capture.domain.triage_service import (
     TriageService,
 )
+from meeting_capture.packs import load_default_packs
 
 #: The fixture meeting the capture beat replays (obviously fictional; see adapters/local).
 DEMO_MEETING_URI = "fixture://meetings/sg-1"

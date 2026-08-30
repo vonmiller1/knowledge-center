@@ -24,13 +24,10 @@ from datetime import date
 import pytest
 
 from meeting_capture.config import Settings, build_container
-from meeting_capture.domain.capture_service import (
-    CaptureResult,
-    MeetingCaptureService,
-    load_default_packs,
-)
+from meeting_capture.domain.capture_service import CaptureResult, MeetingCaptureService
 from meeting_capture.domain.models import TriageInput
 from meeting_capture.domain.triage_service import TriageService
+from meeting_capture.packs import load_default_packs
 
 from tests.fixtures import sample_cases
 

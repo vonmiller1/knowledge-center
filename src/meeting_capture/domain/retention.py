@@ -4,9 +4,11 @@ A retention pack is the client's policy: how long an action has before it breach
 a decision waits for review, how many years the record is retained, and which words mark a
 commitment as externally binding (a signed obligation to a customer or vendor, which must reach a
 human). The numbers are the bank's, and they differ per market, so they live in versioned YAML
-under ``config/packs/`` and are loaded and validated here. An unknown field REFUSES at load: a
-pack that carries a key the engine does not understand is a policy the engine is not applying,
-and silently ignoring it is how a retention rule goes unenforced.
+under ``config/packs/`` and are VALIDATED here. Reading those files is not: the YAML parse
+lives at the config boundary in :mod:`meeting_capture.packs`, and this module takes documents
+that are already plain mappings, so the core depends on no parser. An unknown field REFUSES at
+load: a pack that carries a key the engine does not understand is a policy the engine is not
+applying, and silently ignoring it is how a retention rule goes unenforced.
 
 The engine holds one pack per market and fails closed on a market it has no pack for, so a
 meeting from an unconfigured jurisdiction yields no verdict rather than a guessed one.
@@ -14,15 +16,12 @@ meeting from an unconfigured jurisdiction yields no verdict rather than a guesse
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import date
-from pathlib import Path
 from typing import Any
 
-import yaml
-
-__all__ = ["RetentionPack", "load_packs", "load_pack_mapping"]
+__all__ = ["RetentionPack", "build_pack_set", "load_pack_mapping"]
 
 _REQUIRED: frozenset[str] = frozenset(
     {
@@ -119,20 +118,26 @@ def load_pack_mapping(data: Mapping[str, Any], source: str = "<mapping>") -> Ret
     return _pack_from_mapping(data, source)
 
 
-def load_packs(directory: Path) -> dict[str, RetentionPack]:
-    """Load every ``*.yaml`` retention pack in ``directory``, keyed by its market code.
+def build_pack_set(
+    documents: Iterable[tuple[str, Any]], *, origin: str = "<documents>"
+) -> dict[str, RetentionPack]:
+    """Validate already-parsed pack documents into one set, keyed by market code.
 
-    Two packs claiming the same market is a configuration error, not a silent last-one-wins.
+    ``documents`` is ``(source, parsed)`` pairs in the order the boundary read them; ``source``
+    names where each came from so a refusal points at a file. Every rule that makes a SET of
+    packs valid rather than one pack valid lives here, because they are policy and not parsing:
+    two packs claiming the same market is a configuration error rather than a silent
+    last-one-wins, and an empty set refuses rather than yielding an engine with no policy at
+    all. ``origin`` names the place the documents came from, for that second refusal.
     """
     packs: dict[str, RetentionPack] = {}
-    for path in sorted(directory.glob("*.yaml")):
-        loaded = yaml.safe_load(path.read_text(encoding="utf-8"))
+    for source, loaded in documents:
         if not isinstance(loaded, dict):
-            raise RetentionPackError(f"{path}: a retention pack must be a mapping")
-        pack = _pack_from_mapping(loaded, str(path))
+            raise RetentionPackError(f"{source}: a retention pack must be a mapping")
+        pack = _pack_from_mapping(loaded, source)
         if pack.market in packs:
-            raise RetentionPackError(f"{path}: market {pack.market!r} is already defined")
+            raise RetentionPackError(f"{source}: market {pack.market!r} is already defined")
         packs[pack.market] = pack
     if not packs:
-        raise RetentionPackError(f"no retention packs found under {directory}")
+        raise RetentionPackError(f"no retention packs found under {origin}")
     return packs

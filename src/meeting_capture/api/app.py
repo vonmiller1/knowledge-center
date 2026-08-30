@@ -76,7 +76,7 @@ from ..config import (
     end_user_auth_kind,
     resolve_profile,
 )
-from ..domain.capture_service import MeetingCaptureService, load_default_packs
+from ..domain.capture_service import MeetingCaptureService
 from ..domain.models import TriageInput
 from ..domain.triage_service import TriageService
 
@@ -84,6 +84,7 @@ from ..domain.triage_service import TriageService
 # failure rather than a first-request failure (a serving process must not come up on a profile
 # nobody defined).
 from ..managed_readiness import assert_managed_profile_ready
+from ..packs import load_default_packs
 from ..ports.identity import VERIFIED, EndUserAuthUnavailableError
 from .schemas import (
     CaptureRequest,

@@ -6,7 +6,8 @@ from datetime import date
 
 from meeting_capture.adapters.local.generation import LocalGenerationAdapter
 from meeting_capture.config import build_container
-from meeting_capture.domain.capture_service import MeetingCaptureService, load_default_packs
+from meeting_capture.domain.capture_service import MeetingCaptureService
+from meeting_capture.packs import load_default_packs
 from meeting_capture.ports.generation import ExtractionRequest, NarrationRequest
 
 from tests.conftest import local_settings

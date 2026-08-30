@@ -22,10 +22,11 @@ from hex_service_kit.serialization import to_jsonable
 from pii_kit import redact
 
 from ..config import Container, Settings, build_container
-from ..domain.capture_service import MeetingCaptureService, load_default_packs
+from ..domain.capture_service import MeetingCaptureService
 from ..domain.models import TriageInput
 from ..domain.pii import PII_PATTERNS
 from ..domain.triage_service import TriageService
+from ..packs import load_default_packs
 
 if TYPE_CHECKING:  # pragma: no cover - typing only, never imported at runtime
     from google.adk.tools import FunctionTool
