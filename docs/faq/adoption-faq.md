@@ -106,7 +106,7 @@ bundle name `meeting-knowledge-capture`; rename the bundle and register your own
 It is guarded from inside the gate. A step lives in `demo.STEPS` and its expectation lives in
 `walkthrough.CHECKS`, and `tests/unit/test_demo_surface.py` holds the two sets equal AND drives
 the whole nine-step arc through the real services, applying each check, so a claim the demo makes
-that nobody verifies cannot exist. The same script runs headless in the `demo-gate` workflow.
+that nobody verifies cannot exist. The same script runs headless in the hosted check.
 Keep the pattern when you add a step: put the numbers a check reads in the step's `facts` dict,
 never only in the rendered rows, because a check that parses prose breaks on a wording change.
 
