@@ -98,7 +98,7 @@ Not until you rebuild it, and that is an explicit adoption step rather than a si
 of them can be driven red, and `tests/unit/test_eval_metrics_go_red.py` proves it per market for
 the SLA metric, because a metric that cannot go red is not a metric. But the golden meetings are
 the reference ones: a fork inherits a green gate that measures the wrong meetings until it
-replaces them. `--mode gate` is the promotion half and delegates the verdict to Hrz4 under the
+replaces them. `--mode gate` is the promotion half and delegates the verdict to `model-quality-gate` under the
 bundle name `meeting-knowledge-capture`; rename the bundle and register your own.
 
 ### Will the demo rot after I diverge?

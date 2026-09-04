@@ -73,7 +73,7 @@ No, and two follow-on actions are gated in code rather than in a policy document
   reference, so an unapproved commitment yields ZERO downstream calls.
 
 `tests/unit/test_capture_pipeline.py` covers both, and `tests/unit/test_review_routing.py` proves
-the escalation is ROUTED (to Hrz7, through `ReviewRouterPort`) in the same call that produced the
+the escalation is ROUTED (to `human-review-console`, through `ReviewRouterPort`) in the same call that produced the
 result, on the API, CLI and agent paths alike, rather than merely flagged.
 
 ### What ports does this repo have that its siblings do not?
@@ -99,13 +99,13 @@ integration state, because two of them are wired and the rest are seams:
 
 | Concern | Owned by (catalog id / repo) | H6's role today |
 |---|---|---|
-| Human review and maker-checker console | **Hrz7** `human-review-console` | **wired**: every escalation is routed over the shared `review-kit` (rule R8), and the managed router refuses rather than swallowing one |
-| AI-quality, eval and model-risk promotion gate | **Hrz4** `model-quality-gate` | **client wired**: `--mode gate` asks it for bundle `meeting-knowledge-capture`; registering the bundle is the open half |
-| Observability, immutable WORM audit and FinOps | **Hrz5** `agent-observability` | **partly**: spans go OTLP to its collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set; the shared audit sink is the open half |
-| Governed RAG knowledge base with citations | **Hrz2** `enterprise-knowledge-base` | **port only**: approved minutes are meant to publish here; the managed corpus adapter is a deployment-wired stub |
-| Runtime guardrail: prompt-injection defence, output screening | **Hrz1** `agent-guardrail-gateway` | **not wired**: there is no guardrail port yet; redaction is a different control |
-| Agent registry, versioning, identity, entitlements | **Hrz3** `agent-registry` | **not wired**: the card is published but nothing registers it |
-| Project intake validation | **Rsk3** `architecture-validator` | **not code**: an intake action, recorded in `COMPLIANCE.md` when the project passes |
+| Human review and maker-checker console | `human-review-console` | **wired**: every escalation is routed over the shared `review-kit` (rule R8), and the managed router refuses rather than swallowing one |
+| AI-quality, eval and model-risk promotion gate | `model-quality-gate` | **client wired**: `--mode gate` asks it for bundle `meeting-knowledge-capture`; registering the bundle is the open half |
+| Observability, immutable WORM audit and FinOps | `agent-observability` | **partly**: spans go OTLP to its collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set; the shared audit sink is the open half |
+| Governed RAG knowledge base with citations | `enterprise-knowledge-base` | **port only**: approved minutes are meant to publish here; the managed corpus adapter is a deployment-wired stub |
+| Runtime guardrail: prompt-injection defence, output screening | `agent-guardrail-gateway` | **not wired**: there is no guardrail port yet; redaction is a different control |
+| Agent registry, versioning, identity, entitlements | `agent-registry` | **not wired**: the card is published but nothing registers it |
+| Project intake validation | `architecture-validator` | **not code**: an intake action, recorded in `COMPLIANCE.md` when the project passes |
 
 So the guardrail, the knowledge base, the eval platform, the audit sink and the review console are
 *dependencies*, not features of this repo. The full row-by-row status is in
@@ -116,7 +116,7 @@ So the guardrail, the knowledge base, the eval platform, the audit sink and the 
 Yes, if the shape matches: a transcript or conversation in, a deterministic register of
 obligations out, under human review. The reusable half is the hexagon, the redact-before-model
 ordering, the acceptance and owner-resolution pattern, the grounding check, the eval gate and the
-Hrz7 routing. The vertical half (the artifact models, the retention packs, the fixtures, the
+`human-review-console` routing. The vertical half (the artifact models, the retention packs, the fixtures, the
 golden set) is what you replace. See [`../ADOPTING.md`](../ADOPTING.md) and
 [adoption-faq.md](adoption-faq.md).
 

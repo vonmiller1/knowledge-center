@@ -64,7 +64,7 @@ adapters:
     onprem: meeting_capture.adapters.onprem.review_router:OnPremReviewRouter
 
   # Tracing. Which BACKEND a deployed profile exports to is not a binding: the gcp
-  # adapter reads OTEL_EXPORTER_OTLP_ENDPOINT and sends OTLP to the Hrz5 collector when it
+  # adapter reads OTEL_EXPORTER_OTLP_ENDPOINT and sends OTLP to the agent-observability collector when it
   # is set, straight to Cloud Trace when it is not. Tracing is not essential to
   # correctness, so onprem is ABSENT rather than fatal, unlike the other placeholders.
   tracer:
@@ -72,7 +72,7 @@ adapters:
     gcp: meeting_capture.adapters.gcp.tracer:CloudTracerAdapter
     onprem: meeting_capture.adapters.onprem.tracer:OnPremTracerAdapter
 
-  # The promotion authority (Hrz4). The local adapter scores offline but REFUSES to
+  # The promotion authority (model-quality-gate). The local adapter scores offline but REFUSES to
   # promote: a promotion certified by a laptop with no quality service is certified by
   # nothing.
   evaluation:
@@ -96,7 +96,7 @@ adapters:
     local: meeting_capture.adapters.local.generation:LocalGenerationAdapter
     gcp: meeting_capture.adapters.gcp.generation:CloudGenerationAdapter
     onprem: meeting_capture.adapters.onprem.generation:OnPremGenerationAdapter
-  # The Hrz2 governed corpus (slice 5): review-approved minutes publish here and become
+  # The enterprise-knowledge-base governed corpus (slice 5): review-approved minutes publish here and become
   # retrievable with citations. local is in-memory, gcp is Vertex AI Search (SDK lazy).
   corpus:
     local: meeting_capture.adapters.local.corpus:LocalCorpusAdapter

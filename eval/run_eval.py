@@ -8,9 +8,9 @@ Two named layers via ``--mode`` (the scaffold is ``agent_eval_kit.eval_main``):
   register engine, the minutes grounding and the review-safety property against the dataset's OWN
   hand-computed ``expected_*`` fields. Those expectations are an INDEPENDENT oracle: the SLA dates
   and consequential sets are derived from the market packs by hand, NEVER read back from the
-  pipeline, so a metric that passes is agreeing with a value the pipeline did not produce.
-* **gate** - the promotion verdict from the shared Hrz4 authority (requires the ``gcp`` profile),
-  via ``agent_eval_kit.PromotionGateClient``.
+  pipeline, so a metric that passes is agreeing with a value the pipeline did not produce. *
+  **gate** - the promotion verdict from the shared model-quality-gate authority (requires the
+  ``gcp`` profile), via ``agent_eval_kit.PromotionGateClient``.
 
 Every metric here can be driven red; ``tests/unit/test_eval_metrics_go_red.py`` proves it, per
 market for the SLA metric (``assert_each_can_go_red``). A metric that cannot go red is not a
@@ -46,7 +46,8 @@ THRESHOLDS: dict[str, float] = {
     "review_safety": 0.99,
     "pii_safety": 0.99,
 }
-#: The registered Hrz4 metric bundle for this vertical (Hrz4 owns the metrics + thresholds).
+#: The registered model-quality-gate metric bundle for this vertical (model-quality-gate owns the
+#: metrics + thresholds).
 _BUNDLE = "meeting-knowledge-capture"
 
 
@@ -191,6 +192,6 @@ if __name__ == "__main__":
             smoke=run_smoke,
             gate=run_gate,
             default_dataset=DEFAULT_DATASET,
-            description="Offline / Hrz4 evaluation gate for H6.",
+            description="Offline / model-quality-gate for H6.",
         )
     )

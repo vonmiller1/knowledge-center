@@ -1,4 +1,6 @@
-"""Managed CorpusPort: Hrz2 ingestion via Vertex AI Search (Discovery Engine), imported LAZILY."""
+"""Managed CorpusPort: enterprise-knowledge-base ingestion via Vertex AI Search (Discovery Engine),
+imported LAZILY.
+"""
 
 from __future__ import annotations
 

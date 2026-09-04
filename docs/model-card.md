@@ -22,7 +22,7 @@ is a bounded, replaceable component.
 - Extraction output is validated by `domain/candidates.parse_candidates` (malformed candidates are
   discarded, never repaired). Minutes output is grounded by `domain/minutes.draft_minutes` against
   the register; an ungrounded draft is discarded and never published.
-- Every consequential result sets `requires_human_review` and is routed to Hrz7 (rule R8) in the
+- Every consequential result sets `requires_human_review` and is routed to `human-review-console` (rule R8) in the
   same call; nothing auto-executes.
 
 ## Adapters and profiles
@@ -40,9 +40,9 @@ is a bounded, replaceable component.
 - **Budget and rate controls, and a kill switch** (P-10, P-11): per-tenant token budget, request
   rate limit, and a switch that forces deterministic-only operation with the model disabled.
 - **Evaluation of the live model**: the offline eval scores the deterministic stub pipeline against
-  the golden oracle. Add a managed-profile eval run (Hrz4 promotion gate) that scores real
+  the golden oracle. Add a managed-profile eval run (`model-quality-gate` promotion gate) that scores real
   extraction F1 and minutes groundedness against the same golden meetings.
-- **Prompt-injection screening** on the transcript before generation, via the Hrz1 guardrail
+- **Prompt-injection screening** on the transcript before generation, via the `agent-guardrail-gateway`
   adapter, failing closed to deterministic-only on screen-unavailable.
 
 Until these are complete the system is safe to run offline (deterministic engine plus stub model)

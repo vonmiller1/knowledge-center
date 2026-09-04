@@ -290,7 +290,8 @@ def triage(
 ) -> TriageResponse:
     """Triage a case; the audit actor is the verified principal, never the request body.
 
-    Rule R8: a result that sets ``requires_human_review`` is ROUTED to the Hrz7 console here,
+    Rule R8: a result that sets ``requires_human_review`` is ROUTED to the human-review-console
+    here,
     in the same request that produced it. Setting the flag is not the escalation; routing is.
     The maker is the verified principal, so the console records who originated the decision.
     """
@@ -332,7 +333,8 @@ def capture(
 
     The consequential engine runs in pure code; the model only narrates and extracts, and its
     output is schema-validated. Rule R8: every consequential entry (unowned or externally
-    binding) is ROUTED to Hrz7 in the same request, with the verified principal as maker. The
+    binding) is ROUTED to human-review-console in the same request, with the verified principal as
+    maker. The
     audit actor is the verified principal, never anything in the request body.
     """
     from datetime import date

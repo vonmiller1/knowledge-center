@@ -41,8 +41,8 @@ discardable. The pipeline (`domain/capture_service.py`) runs in one security ord
 5. **Cited minutes (slice 5).** The model drafts minutes plus structured claims;
    `domain/minutes.draft_minutes` GROUNDS them against the register (every claim must name a real
    accepted entry and repeat its owner and date; no prose date may be absent from the register) and
-   DISCARDS an ungrounded draft. Review-approved minutes publish into the Hrz2 corpus (`CorpusPort`).
-6. **Route and dispatch (slices 5 and 6).** Every consequential entry is routed to Hrz7 under rule
+   DISCARDS an ungrounded draft. Review-approved minutes publish into the `enterprise-knowledge-base` corpus (`CorpusPort`).
+6. **Route and dispatch (slices 5 and 6).** Every consequential entry is routed to `human-review-console` under rule
    R8 in the same call. `TaskRouterPort` creates an external task ONLY for a review-approved entry;
    an unapproved consequential entry yields zero downstream calls.
 
@@ -61,7 +61,7 @@ discardable. The pipeline (`domain/capture_service.py`) runs in one security ord
 - **Determinism**: the severity band and escalation decision are pure stdlib and replayable; an
   LLM may narrate but never produces the band.
 - **Maker-checker (P-06) and routing (R8)**: a HIGH/CRITICAL result sets
-  `requires_human_review=True` AND is routed through `ReviewRouterPort` to the Hrz7 console in the
+  `requires_human_review=True` AND is routed through `ReviewRouterPort` to the `human-review-console` in the
   same request. The flag alone is not the escalation. The response carries `review_ref`, so a
   caller can tell a routed escalation from one that stopped here. The managed adapter refuses to
   run with no console configured rather than swallowing the escalation.
@@ -104,7 +104,7 @@ discardable. The pipeline (`domain/capture_service.py`) runs in one security ord
   resolved server-side and the resolved headers are attached afterwards. The service credential
   is read from the server environment only. Framing and CORS are allowlists that refuse a
   wildcard however it is written, and an empty allowlist denies rather than opening up.
-- **Eval**: `--mode smoke` is the offline pre-merge check; `--mode gate` is the Hrz4 promotion
+- **Eval**: `--mode smoke` is the offline pre-merge check; `--mode gate` is the `model-quality-gate` promotion
   authority. The gate fails closed.
 - **Tests**: split into `unit`, `contract` and `integration`. The offline gate runs the first
   two; every integration module is marked, and that marking is itself enforced.

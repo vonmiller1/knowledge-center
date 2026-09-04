@@ -41,7 +41,7 @@ If your product is another *transcript to obligation* vertical (a call-centre QA
 credit-committee minute taker, a board-pack secretary), most of this transfers directly:
 `domain/turns.py` (deterministic assembly plus redact-before-model), the acceptance and owner
 resolution pattern in `domain/action_register.py`, the grounding check in `domain/minutes.py`,
-the eval gate and the Hrz7 human-review routing. You replace the artifact models, the retention
+the eval gate and the `human-review-console` human-review routing. You replace the artifact models, the retention
 packs and the golden set.
 
 **One honest caveat about the stdlib-only domain.** `domain/` is stdlib plus the workspace kits,
@@ -142,7 +142,7 @@ decisions below.
    the six `THRESHOLDS` in `eval/run_eval.py` (`extraction_f1`, `register_accuracy`,
    `sla_exactness`, `groundedness`, `review_safety`, `pii_safety`, all at 0.99) are what
    `make gate` measures. A fork inherits a green gate that measures the WRONG meetings until you
-   rebuild them. The bundle name `meeting-knowledge-capture` is what `--mode gate` asks Hrz4
+   rebuild them. The bundle name `meeting-knowledge-capture` is what `--mode gate` asks `model-quality-gate`
    about; rename it and register your own.
 8. **Deployment posture.** Review the Dockerfile (digest-pinned base, non-root uid 10001,
    `HEALTHCHECK` on `/healthz`) and `infra/terraform/` before you expose anything: the serving
@@ -155,7 +155,7 @@ decisions below.
    for the `gcp` generation adapter and wire the extraction and narration prompts; add a
    per-tenant token budget, a request rate limit and a kill switch that forces deterministic-only
    operation; add a managed-profile eval run that scores the real model rather than the
-   deterministic stub; and screen the transcript for prompt injection through the Hrz1 guardrail,
+   deterministic stub; and screen the transcript for prompt injection through the `agent-guardrail-gateway`,
    failing closed to deterministic-only when the screen is unavailable. Until those are closed the
    system is safe to run offline and the managed model path is not production-cleared.
 
@@ -168,13 +168,13 @@ the rest are seams":
 
 | Sibling | What it owns | State in this repo |
 |---|---|---|
-| **Hrz7** human-review and maker-checker console | every `requires_human_review` escalation in the catalog | **Wired.** `ports/review_router.py` with an adapter in all three families; the managed one submits over the shared `review-kit` to `review_url` (`HUMAN_REVIEW_URL`) and REFUSES rather than swallowing an escalation when it is empty. Rule R8 is Covered in `COMPLIANCE.md`. |
-| **Hrz4** AI-quality and model-risk gate | the promotion verdict and the metric bundle | **Client wired, registration outstanding.** `adapters/gcp/evaluation.py` and `eval/run_eval.py --mode gate` ask Hrz4 for bundle `meeting-knowledge-capture` and refuse to run off the managed profile. Registering the bundle and its thresholds with Hrz4 is the open half (P-08, R5). |
-| **Hrz5** observability, immutable audit and FinOps | shared traces and the WORM audit sink | **Partly.** The tracer exports OTLP to the Hrz5 collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set and to Cloud Trace when it is not; the audit trail is hash-chained and anchored locally, with `infra/terraform/logging_worm.tf` providing the locked bucket. Binding the prompt and response record to the shared sink is the open half (R2). |
-| **Hrz2** governed knowledge base (RAG with citations) | ACL-aware retrieval over the bank corpus | **Port only.** `ports/corpus.py` exists and the `local` adapter publishes and retrieves in memory, but `adapters/gcp/corpus.py` is a deployment-wired stub that raises. Approved minutes are meant to publish here; wire it before you claim retrieval. |
-| **Hrz1** guardrail gateway | prompt-injection defence and output filtering | **Not wired.** There is no `GuardrailPort` in `ports/`. Redaction before the model is this repo's own (`domain/turns.redact_for_model`), which is a different control. R1 stays Partial until the gateway is bound. |
-| **Hrz3** agent registry | agent identity, versioning and entitlements | **Not wired.** The A2A card is published at `/.well-known/agent-card.json` from the same tool table the runtime binds, but nothing registers it. R4 stays Partial. |
-| **Rsk3** architecture and requirements validator | project intake validation | **Not wired, and not code.** R6 is an intake action: record the validation reference in `COMPLIANCE.md` when the project passes. |
+| `human-review-console` human-review and maker-checker console | every `requires_human_review` escalation in the catalog | **Wired.** `ports/review_router.py` with an adapter in all three families; the managed one submits over the shared `review-kit` to `review_url` (`HUMAN_REVIEW_URL`) and REFUSES rather than swallowing an escalation when it is empty. Rule R8 is Covered in `COMPLIANCE.md`. |
+| `model-quality-gate` | the promotion verdict and the metric bundle | **Client wired, registration outstanding.** `adapters/gcp/evaluation.py` and `eval/run_eval.py --mode gate` ask `model-quality-gate` for bundle `meeting-knowledge-capture` and refuse to run off the managed profile. Registering the bundle and its thresholds with `model-quality-gate` is the open half (P-08, R5). |
+| `agent-observability`, immutable audit and FinOps | shared traces and the WORM audit sink | **Partly.** The tracer exports OTLP to the `agent-observability` collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set and to Cloud Trace when it is not; the audit trail is hash-chained and anchored locally, with `infra/terraform/logging_worm.tf` providing the locked bucket. Binding the prompt and response record to the shared sink is the open half (R2). |
+| `enterprise-knowledge-base` governed knowledge base (RAG with citations) | ACL-aware retrieval over the bank corpus | **Port only.** `ports/corpus.py` exists and the `local` adapter publishes and retrieves in memory, but `adapters/gcp/corpus.py` is a deployment-wired stub that raises. Approved minutes are meant to publish here; wire it before you claim retrieval. |
+| `agent-guardrail-gateway` | prompt-injection defence and output filtering | **Not wired.** There is no `GuardrailPort` in `ports/`. Redaction before the model is this repo's own (`domain/turns.redact_for_model`), which is a different control. R1 stays Partial until the gateway is bound. |
+| `agent-registry` | agent identity, versioning and entitlements | **Not wired.** The A2A card is published at `/.well-known/agent-card.json` from the same tool table the runtime binds, but nothing registers it. R4 stays Partial. |
+| `architecture-validator` architecture and requirements validator | project intake validation | **Not wired, and not code.** R6 is an intake action: record the validation reference in `COMPLIANCE.md` when the project passes. |
 
 The managed transcription, diarization, generation and task-router adapters are in the same
 state as the corpus one: the class exists, the SDK import is lazy and correct, and the call
@@ -190,8 +190,8 @@ finished managed profile, and closing it is deployment work you own.
 - [ ] Owned the severity bands in `domain/triage_service.py` with your compliance function, and pinned them with a test.
 - [ ] Set `JURISDICTIONS` in `domain/pii.py` to the markets you serve, with the catch-all rows ordered last.
 - [ ] Replaced the three fixture meetings and every synthetic triage case.
-- [ ] Rebuilt the eval golden set, chose your thresholds, and registered your bundle with Hrz4.
+- [ ] Rebuilt the eval golden set, chose your thresholds, and registered your bundle with `model-quality-gate`.
 - [ ] Reviewed the deploy posture (Dockerfile, the four Terraform toggles, the loopback bind).
 - [ ] Closed or accepted each outstanding model control in [`model-card.md`](model-card.md).
-- [ ] Wired your Hrz7 review endpoint and decided which remaining sibling systems you integrate vs stub.
+- [ ] Wired your `human-review-console` review endpoint and decided which remaining sibling systems you integrate vs stub.
 - [ ] Recorded your baseline upstream tag so you can take future fixes.

@@ -68,7 +68,7 @@ has switched off is no guard.
 
 ## What about outbound service-to-service calls?
 
-The real one is the Hrz7 review submission (`adapters/gcp/review_router.py`) over the shared
+The real one is the `human-review-console` review submission (`adapters/gcp/review_router.py`) over the shared
 `review-kit`, which is stdlib `urllib` with S2S headers wire-compatible with
 `hex-service-kit`'s server verifier. Its credentials are `HUMAN_REVIEW_S2S_TOKEN` and
 `HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
@@ -119,7 +119,7 @@ build-guarded today. `make gate` is deliberately offline and would not run terra
 
 Read this list rather than inferring from the green gate:
 
-- **Prompt-injection defence and output filtering.** There is no `GuardrailPort` and no Hrz1
+- **Prompt-injection defence and output filtering.** There is no `GuardrailPort` and no `agent-guardrail-gateway`
   binding. Redaction is not injection defence. Rule R1 in [`../../COMPLIANCE.md`](../../COMPLIANCE.md)
   stays Partial until the gateway is bound.
 - **Resilience controls.** No timeouts, no circuit breaker and no documented kill switch for
@@ -130,12 +130,12 @@ Read this list rather than inferring from the green gate:
   [`../model-card.md`](../model-card.md), which this FAQ does not restate.
 - **Object-level authorisation.** There is no queryable store yet, so tenant isolation is carried
   on outbound reviews only (C2, and the Tenant isolation row in `COMPLIANCE.md`).
-- **Hrz3 registration.** The A2A card is published but nothing registers it (R4).
+- **`agent-registry` registration.** The A2A card is published but nothing registers it (R4).
 
 ## What is explicitly out of scope for this repo?
 
-The guardrail gateway (Hrz1), the governed knowledge base (Hrz2), the agent registry (Hrz3), the
-AI-quality and promotion gate (Hrz4), the shared observability and WORM audit sink (Hrz5), and
-the human-review console (Hrz7). This repo integrates those through ports rather than
+The guardrail gateway (`agent-guardrail-gateway`), the governed knowledge base (`enterprise-knowledge-base`), the agent registry (`agent-registry`), the
+AI-quality and promotion gate (`model-quality-gate`), the shared observability and WORM audit sink (`agent-observability`), and
+the human-review console (`human-review-console`). This repo integrates those through ports rather than
 re-implementing them. See [features-faq.md](features-faq.md) for the full boundary map and which
 of them are actually wired today.

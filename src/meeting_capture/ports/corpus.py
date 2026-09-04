@@ -1,11 +1,11 @@
-"""CorpusPort: the Hrz2 governed-knowledge boundary (slice 5's publish target).
+"""CorpusPort: the enterprise-knowledge-base governed-knowledge boundary (slice 5's publish target).
 
-Review-approved minutes publish into the Hrz2 Enterprise Knowledge Base so past decisions become
-retrievable WITH citations, which is the row's mandatory Hrz2 dependency. The port names the
-hand-off; the adapters own the ingestion. ``publish`` returns the corpus document id (never
-empty, so a caller can record what landed), and ``retrieve`` is how a later meeting or an operator
-finds a prior decision. Retrieval that finds nothing returns an empty tuple; a consumer that
-needs grounding treats empty as a refusal rather than inventing an answer.
+Review-approved minutes publish into the enterprise-knowledge-base so past decisions become
+retrievable WITH citations, which is the row's mandatory enterprise-knowledge-base dependency. The
+port names the hand-off; the adapters own the ingestion. ``publish`` returns the corpus document id
+(never empty, so a caller can record what landed), and ``retrieve`` is how a later meeting or an
+operator finds a prior decision. Retrieval that finds nothing returns an empty tuple; a consumer
+that needs grounding treats empty as a refusal rather than inventing an answer.
 """
 
 from __future__ import annotations

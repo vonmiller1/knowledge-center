@@ -53,9 +53,9 @@ and a `PortCase` in `tests/contract/canonical.py`), and
 ## Which managed adapters are actually implemented?
 
 This matters more than the port count, so here is the honest split. Real in the `gcp` family:
-`audit.py` (Cloud Logging), `identity.py` (IAP assertion verification), `review_router.py` (Hrz7
+`audit.py` (Cloud Logging), `identity.py` (IAP assertion verification), `review_router.py` (`human-review-console`
 over `review-kit`), `tracer.py` (OpenTelemetry through the commons), `evaluation.py` (the
-Hrz4 promotion client). Deployment-wired stubs that construct the client and then raise
+`model-quality-gate` promotion client). Deployment-wired stubs that construct the client and then raise
 `NotImplementedError` naming [`../runbook.md`](../runbook.md): `transcription.py`,
 `diarization.py`, `generation.py`, `corpus.py`, `task_router.py`.
 
@@ -109,7 +109,7 @@ vendor library.
 - **The managed vertical adapters**, as above: five of the ten `gcp` bindings raise today.
 - **Tamper-evidence limits.** The in-repo hash chain plus anchor detects edits, reorders,
   deletions and truncation. It is not a substitute for the managed WORM sink (the locked Cloud
-  Logging bucket in `logging_worm.tf`, or Hrz5) in production, and
+  Logging bucket in `logging_worm.tf`, or `agent-observability`) in production, and
   `scripts/portability_demo.py` says so rather than overclaiming.
 - **The terraform posture claims** are encoded as mock-provider plan tests in
   `infra/terraform/production_edge.tftest.hcl`, but nothing in this repo runs them: there is no

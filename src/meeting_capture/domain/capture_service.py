@@ -1,17 +1,18 @@
 """The meeting-capture orchestrator: the one place slices 2 through 6 are wired together.
 
-It depends only on port PROTOCOLS (the same way ``TriageService`` depends on the audit port), so
-it stays testable and pure of transport. The order is the security order: ingest, ASSEMBLE
+It depends only on port PROTOCOLS (the same way ``TriageService`` depends on the audit port), so it
+stays testable and pure of transport. The order is the security order: ingest, ASSEMBLE
 deterministically, REDACT before the model is ever called, extract candidates (model),
 schema-validate them, run the deterministic register engine, draft and GROUND minutes, write an
-already-redacted audit record, then ROUTE every consequential entry to Hrz7 under rule R8.
+already-redacted audit record, then ROUTE every consequential entry to human-review-console under
+rule R8.
 
 Two follow-on actions are gated on human review, because they act in the world:
 
-* :meth:`publish_minutes` refuses to publish minutes into the Hrz2 corpus while they carry an
-  unresolved consequential entry, and
-* :meth:`dispatch_task` refuses to create an external task for a consequential entry that has no
-  review reference, so an unapproved commitment yields ZERO downstream calls.
+* :meth:`publish_minutes` refuses to publish minutes into the enterprise-knowledge-base corpus while
+  they carry an unresolved consequential entry, and * :meth:`dispatch_task` refuses to create an
+  external task for a consequential entry that has no review reference, so an unapproved commitment
+  yields ZERO downstream calls.
 """
 
 from __future__ import annotations
@@ -199,7 +200,9 @@ class MeetingCaptureService:
     def _route_consequential(
         self, register: Register, *, actor: str
     ) -> tuple[Register, dict[str, str]]:
-        """Route every consequential entry to Hrz7 and stamp each entry with its review ref."""
+        """Route every consequential entry to human-review-console and stamp each entry with its
+        review ref.
+        """
         review_refs: dict[str, str] = {}
         updated: list[RegisterEntry] = []
         for entry in register.entries:
@@ -223,7 +226,8 @@ class MeetingCaptureService:
     def publish_minutes(
         self, result: CaptureResult, *, review_approved: bool = False
     ) -> str | None:
-        """Publish grounded minutes to the Hrz2 corpus; refuse while a review is unresolved.
+        """Publish grounded minutes to the enterprise-knowledge-base corpus; refuse while a review
+        is unresolved.
 
         Returns the corpus document id, or ``None`` when publication is withheld (ungrounded
         minutes, or consequential minutes that are not yet review-approved).

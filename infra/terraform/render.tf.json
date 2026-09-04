@@ -3,6 +3,6 @@
     "render_region": "asia-southeast1",
     "render_package_name": "meeting_capture",
     "render_env_prefix": "MEETCAP",
-    "render_catalog_id": "H6"
+    "render_repository": "meeting-knowledge-capture"
   }
 }

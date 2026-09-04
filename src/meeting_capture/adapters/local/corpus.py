@@ -1,9 +1,10 @@
-"""Local CorpusPort: an in-memory governed corpus standing in for Hrz2 (SDK-free).
+"""Local CorpusPort: an in-memory governed corpus standing in for enterprise-knowledge-base
+(SDK-free).
 
 Publish stores the (already-redacted) minutes; retrieve does a substring search over what was
-published, so slice 5's publish round-trip and "past decisions are retrievable with citations"
-run offline. It is deliberately not a no-op: a silent corpus would let a repo claim the Hrz2
-dependency is wired while nothing landed.
+published, so slice 5's publish round-trip and "past decisions are retrievable with citations" run
+offline. It is deliberately not a no-op: a silent corpus would let a repo claim the
+enterprise-knowledge-base dependency is wired while nothing landed.
 """
 
 from __future__ import annotations

@@ -10,7 +10,7 @@ an action's owner must resolve to a participant, and a due phrase that was given
 candidate that fails any check is REJECTED with the reason recorded, not repaired. An accepted
 commitment that is unowned (a group action with nobody assigned) or externally binding (a signed
 obligation to a customer or vendor) is consequential: ``requires_human_review`` is set so slice 5
-routes it to Hrz7 before anything acts on it.
+routes it to human-review-console before anything acts on it.
 
 Owner resolution distinguishes three outcomes so a hallucination is not mistaken for a genuine
 gap: a name that IS a participant resolves; ``I`` / ``we`` with nobody named is unassigned

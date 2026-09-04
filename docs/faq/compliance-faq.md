@@ -18,7 +18,7 @@ register and the minutes are byte-identical, so a model change cannot move a fig
 Anything consequential (an unassigned action, one whose resolved owner carries the `third_party`
 channel role, or one whose text names an external-binding marker in the market's retention pack)
 sets `requires_human_review` and is
-ROUTED to the Hrz7 human-review console in the same call that produced it, over the shared
+ROUTED to the `human-review-console` in the same call that produced it, over the shared
 `review-kit` (dependency rule R8). Setting the flag and calling the router is one act, not
 two. The managed router REFUSES when no console is configured rather than swallowing the
 escalation, and two follow-on actions are gated in code: minutes will not publish to the corpus
@@ -63,7 +63,7 @@ without the anchor.
 
 Every register entry carries a span citation back into the transcript turn it came from, and the
 engine is deterministic, so a reviewer can recompute the whole register from the same transcript,
-the same candidates, the same pack and the same `as_of`. The enterprise WORM sink is Hrz5 and the
+the same candidates, the same pack and the same `as_of`. The enterprise WORM sink is `agent-observability` and the
 locked Cloud Logging bucket; the in-repo chain is the offline stand-in, with its limits stated in
 [security-faq.md](security-faq.md) rather than glossed.
 
@@ -78,9 +78,9 @@ The gate half: `eval/run_eval.py --mode smoke` runs in `make gate` on every chan
 metrics at a 0.99 threshold against a golden set of meetings, including a `pii_safety` metric
 scored two independent ways. `tests/unit/test_not_falsely_green.py` and
 `tests/unit/test_eval_metrics_go_red.py` prove the metrics can go red. `--mode gate` delegates the
-promotion verdict to Hrz4 under the bundle `meeting-knowledge-capture` and refuses to run off
+promotion verdict to `model-quality-gate` under the bundle `meeting-knowledge-capture` and refuses to run off
 the managed profile, because a repo that scored itself and promoted itself would be a gate in name
-only. Registering that bundle and its thresholds with Hrz4 is an open item (P-08 and R5).
+only. Registering that bundle and its thresholds with `model-quality-gate` is an open item (P-08 and R5).
 
 ### Is data residency enforced, or only documented?
 
@@ -115,20 +115,20 @@ that file should be quoted as regulatory assurance.
 The rows to raise at a risk forum, all named in `COMPLIANCE.md` and
 [`../practices-audit.md`](../practices-audit.md):
 
-- **Guardrail (R1).** No Hrz1 binding, so there is no prompt-injection defence or output filtering
+- **Guardrail (R1).** No `agent-guardrail-gateway` binding, so there is no prompt-injection defence or output filtering
   on the model boundary yet. Redaction is a different control.
 - **Grounding (P-05) and retrieval (R3).** The corpus port exists and the offline adapter works,
   but the managed adapter is a deployment-wired stub, so there is no live governed retrieval.
-- **Shared observability (R2).** Traces reach the Hrz5 collector when the OTLP endpoint is set;
+- **Shared observability (R2).** Traces reach the `agent-observability` collector when the OTLP endpoint is set;
   the prompt and response record does not yet land in the shared sink.
 - **Registration (R4) and promotion (R5).** The A2A card is published and the promotion client is
-  wired, but neither is registered with Hrz3 or Hrz4.
+  wired, but neither is registered with `agent-registry` or `model-quality-gate`.
 - **Resilience (P-10) and cost control (P-11).** No timeouts, circuit breaker, documented kill
   switch, token budget or cache; the CPS 230 recovery objectives are not yet recorded in the
   runbook.
 - **Object-level authorisation.** No queryable store yet, so tenant isolation is carried on
   outbound reviews only.
-- **Intake validation (R6).** An action, not a control: record the Rsk3 reference when the project
+- **Intake validation (R6).** An action, not a control: record the `architecture-validator` reference when the project
   passes.
 
 ### Can we run it against real meetings today?
