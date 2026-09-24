@@ -8,6 +8,7 @@ from datetime import date
 
 from hex_service_kit.logging import configure_logging
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import build_container
 from ..domain.capture_service import MeetingCaptureService
 from ..domain.models import TriageInput
@@ -49,18 +50,20 @@ def main(argv: list[str] | None = None) -> int:
         if result.requires_human_review:
             # Rule R8 on the CLI path too: the same escalation, the same router. A surface that
             # only printed the flag would be a second place for an escalation to stop.
-            ref = container.review_router.route(result, maker=args.actor, tenant=args.tenant)
-            print(f"  routed to human review: {ref}")
+            routing = RecordingReviewRouter(container.review_router)
+            ref = routing.route(result, maker=args.actor, tenant=args.tenant)
+            print(f"  human review hand-off : {routing.outcome.value} {ref}".rstrip())
         return 0
 
     if args.command == "capture":
+        routing = RecordingReviewRouter(container.review_router)
         capture_service = MeetingCaptureService(
             transcription=container.transcription,
             diarization=container.diarization,
             generation=container.generation,
             corpus=container.corpus,
             task_router=container.task_router,
-            review_router=container.review_router,
+            review_router=routing,
             audit=container.audit,
             tracer=container.tracer,
             packs=load_default_packs(),
@@ -88,6 +91,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"  {marker} {entry.entry_id} {entry.kind.value:<8} {entry.outcome.value:<8} "
                 f"owner={entry.owner or '-'} due={due}{reasons}"
             )
+        print(f"  human review hand-off : {routing.outcome.value}")
         return 0
 
     return 2  # pragma: no cover - argparse requires a subcommand

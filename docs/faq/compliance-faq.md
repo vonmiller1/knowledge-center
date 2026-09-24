@@ -20,8 +20,7 @@ channel role, or one whose text names an external-binding marker in the market's
 sets `requires_human_review` and is
 ROUTED to the `human-review-console` in the same call that produced it, over the shared
 `review-kit` (dependency rule R8). Setting the flag and calling the router is one act, not
-two. The managed router REFUSES when no console is configured rather than swallowing the
-escalation, and two follow-on actions are gated in code: minutes will not publish to the corpus
+two. The managed profile REFUSES TO BOOT with routing on and no console configured, and every response reports `review_routing`, so a failed hand-off is visible rather than swallowed (`MEETCAP_REVIEW_ROUTING` switches routing), and two follow-on actions are gated in code: minutes will not publish to the corpus
 while an unresolved consequential entry remains, and no external task is created for a
 consequential entry with no review reference.
 

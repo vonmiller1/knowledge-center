@@ -72,8 +72,9 @@ The real one is the `human-review-console` review submission (`adapters/gcp/revi
 `review-kit`, which is stdlib `urllib` with S2S headers wire-compatible with
 `hex-service-kit`'s server verifier. Its credentials are `HUMAN_REVIEW_S2S_TOKEN` and
 `HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
-`MEETCAP_S2S_TOKEN`. The managed router REFUSES when no console URL is configured rather than
-swallowing the escalation.
+`MEETCAP_S2S_TOKEN`. With routing on and no console URL configured, the managed profile
+REFUSES TO BOOT, and a hand-off that fails at request time is reported as
+`review_routing: "failed"` rather than swallowed.
 
 ## Are there secrets in the repo?
 

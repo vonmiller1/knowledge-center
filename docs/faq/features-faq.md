@@ -99,7 +99,7 @@ integration state, because two of them are wired and the rest are seams:
 
 | Concern | Owned by (catalog id / repo) | H6's role today |
 |---|---|---|
-| Human review and maker-checker console | `human-review-console` | **wired**: every escalation is routed over the shared `review-kit` (rule R8), and the managed router refuses rather than swallowing one |
+| Human review and maker-checker console | `human-review-console` | **wired**: every escalation is routed over the shared `review-kit` (rule R8), the service refuses to boot with routing on and no console named, and every response reports `review_routing` |
 | AI-quality, eval and model-risk promotion gate | `model-quality-gate` | **client wired**: `--mode gate` asks it for bundle `meeting-knowledge-capture`; registering the bundle is the open half |
 | Observability, immutable WORM audit and FinOps | `agent-observability` | **partly**: spans go OTLP to its collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set; the shared audit sink is the open half |
 | Governed RAG knowledge base with citations | `enterprise-knowledge-base` | **port only**: approved minutes are meant to publish here; the managed corpus adapter is a deployment-wired stub |

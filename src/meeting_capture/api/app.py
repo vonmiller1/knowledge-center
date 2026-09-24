@@ -67,6 +67,7 @@ from hex_service_kit.web import (
     make_require_service_caller,
 )
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import (
     LOCAL_PROFILE,
     Container,
@@ -301,22 +302,25 @@ def triage(
         TriageInput(subject=request.subject, text=request.text),
         actor=principal.actor,
     )
-    review_ref = ""
-    if result.requires_human_review:
-        review_ref = container.review_router.route(
-            result, maker=principal.actor, tenant=principal.tenant
-        )
-    return TriageResponse.from_domain(result, review_ref=review_ref)
+    # The hand-off never fails an already-scored, already-audited triage; the response says
+    # what happened to it instead (the fleet's runtime-control contract).
+    routing = RecordingReviewRouter(container.review_router)
+    review_ref = routing.route(result, maker=principal.actor, tenant=principal.tenant)
+    return TriageResponse.from_domain(
+        result, review_ref=review_ref, review_routing=routing.outcome.value
+    )
 
 
-def _capture_service(container: Container, *, tenant: str) -> MeetingCaptureService:
+def _capture_service(
+    container: Container, *, tenant: str, review_router: RecordingReviewRouter | None = None
+) -> MeetingCaptureService:
     return MeetingCaptureService(
         transcription=container.transcription,
         diarization=container.diarization,
         generation=container.generation,
         corpus=container.corpus,
         task_router=container.task_router,
-        review_router=container.review_router,
+        review_router=review_router or container.review_router,
         audit=container.audit,
         tracer=container.tracer,
         packs=load_default_packs(),
@@ -347,7 +351,10 @@ def capture(
             detail=f"as_of must be an ISO date (YYYY-MM-DD): {exc}",
         ) from exc
     container = _container()
-    service = _capture_service(container, tenant=principal.tenant)
+    # Each consequential entry's hand-off is recorded, so a console outage no longer fails an
+    # already-audited capture: the response says what happened instead.
+    routing = RecordingReviewRouter(container.review_router)
+    service = _capture_service(container, tenant=principal.tenant, review_router=routing)
     try:
         result = service.capture(
             request.audio_uri,
@@ -360,7 +367,7 @@ def capture(
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)
         ) from exc
-    return CaptureResponse.from_domain(result)
+    return CaptureResponse.from_domain(result, review_routing=routing.outcome.value)
 
 
 @app.post("/v1/audit/ping", dependencies=[Depends(require_service_caller)], tags=["ops"])
