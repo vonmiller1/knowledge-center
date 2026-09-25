@@ -18,6 +18,8 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from hex_service_kit import provenance
+
 from ...config import Settings
 from ...ports.generation import ExtractionRequest, NarrationRequest
 from ._fixtures import meeting_for_transcript
@@ -26,11 +28,17 @@ _ACTION_CUES = ("i will", "i'll", "we will", "we'll", "please", "action:", "foll
 _DECISION_CUES = ("we agreed", "we decided", "decision:", "agreed to", "we will go with")
 
 
+#: What this model answers as, for the console's model pill: the name ``generator_model``
+#: reports under ``local``, so the pill before and after an answer agree.
+STUB_MODEL = "deterministic-offline-stub"
+
+
 class LocalGenerationAdapter:
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
 
     def extract(self, request: ExtractionRequest) -> str:
+        provenance.note_model(STUB_MODEL)
         transcript = request.transcript
         meeting = meeting_for_transcript(transcript.transcript_id)
         if meeting is not None:
@@ -92,6 +100,7 @@ class LocalGenerationAdapter:
         return out
 
     def narrate(self, request: NarrationRequest) -> str:
+        provenance.note_model(STUB_MODEL)
         register = request.register
         lines: list[str] = ["# Minutes", ""]
         claims: list[dict[str, str]] = []

@@ -149,8 +149,10 @@ class MeetingCaptureService:
         redacted = redact_for_model(assembled, PII_PATTERNS)
         resolved_meeting_id = meeting_id or redacted.transcript_id
 
+        # Extraction feeds the deterministic engine and is compared against the gold set: PINNED.
         parse = parse_candidates(
-            self._generation.extract(ExtractionRequest(transcript=redacted)), redacted
+            self._generation.extract(ExtractionRequest(transcript=redacted, temperature=0.0)),
+            redacted,
         )
         register = self._engine.build(
             redacted,
@@ -159,8 +161,12 @@ class MeetingCaptureService:
             as_of=as_of,
             meeting_id=resolved_meeting_id,
         )
+        # Narration drafts minutes over a register the engine already fixed: FREE (no temperature
+        # sent), and every claim in the draft is still grounded before it is kept.
         minutes = draft_minutes(
-            register, self._generation.narrate(NarrationRequest(register, redacted)), redacted
+            register,
+            self._generation.narrate(NarrationRequest(register, redacted, temperature=None)),
+            redacted,
         )
 
         self._record(register, minutes, actor=actor)
